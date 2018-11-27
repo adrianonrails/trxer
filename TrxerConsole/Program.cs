@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Xsl;
@@ -24,13 +25,30 @@ namespace TrxerConsole
         /// <param name="args">First cell shoud be TRX path</param>
         static void Main(string[] args)
         {
+            var xsl = PrepareXsl();
             if (args.Any() == false)
             {
-                Console.WriteLine("No trx file,  Trxer.exe <filename>");
+                // Transform all *.trx
+                // List all *.trx files
+                var trxs = Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.trx");
+                foreach (var trx in trxs)
+                {
+                    DoTransform(trx, xsl);
+                }
                 return;
             }
-            Console.WriteLine("Trx File\n{0}", args[0]);
-            Transform(args[0], PrepareXsl());
+            DoTransform(args[0], xsl);
+        }
+
+        /// <summary>
+        /// Just a wrapper method that adds logging to Transform method
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="xsl"></param>
+        private static void DoTransform(string fileName, XmlDocument xsl)
+        {
+            Console.WriteLine("Trx File\n{0}", fileName);
+            Transform(fileName, xsl);
         }
 
         /// <summary>
