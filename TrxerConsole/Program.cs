@@ -26,18 +26,29 @@ namespace TrxerConsole
         static void Main(string[] args)
         {
             var xsl = PrepareXsl();
+
             if (args.Any() == false)
+            {
+                Console.WriteLine("No trx file,  Trxer.exe <filename>");
+                return;
+            }
+
+            // If single file
+            if (File.Exists(args[0]))
+            {
+                DoTransform(args[0], xsl);
+            }
+            // If passed is directory
+            else if(Directory.Exists(args[0]))
             {
                 // Transform all *.trx
                 // List all *.trx files
-                var trxs = Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.trx");
+                var trxs = Directory.EnumerateFiles(args[0], "*.trx");
                 foreach (var trx in trxs)
                 {
                     DoTransform(trx, xsl);
                 }
-                return;
             }
-            DoTransform(args[0], xsl);
         }
 
         /// <summary>
